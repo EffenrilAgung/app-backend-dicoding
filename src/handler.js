@@ -2,35 +2,28 @@ const { nanoid } = require('nanoid');
 const notes = require('./notes');
 
 const addNoteHandler = (request, h) => {
-  // * Berikut cara untuk mendapatkan body request
+  // dapatkan body req dengan payload
   const { title, tags, body } = request.payload;
 
-  const option = {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  };
-
   const id = nanoid(16);
-  const createdAt = new Date().toLocaleDateString('id-ID', option);
-  const updatedAt = createdAt;
-  console.log(createdAt);
+  // properti creat dan update memiliki nilai yang sama
+  const createdAt = new Date().toISOString();
+  const updateAt = createdAt;
 
+  // gunakan method push() memasukkan nilai array
   const newNote = {
     title,
     tags,
     body,
     id,
     createdAt,
-    updatedAt,
+    updateAt,
   };
-
   notes.push(newNote);
 
+  // method filter() untuk mengetahui array masuk
   const isSuccess = notes.filter((note) => note.id === id).length > 0;
 
-  //   * Untuk memberikan respon yang di berikan server jika isSuccess Bernilai TRUE
   if (isSuccess) {
     const response = h.response({
       status: 'success',
@@ -42,17 +35,16 @@ const addNoteHandler = (request, h) => {
     response.code(201);
     return response;
   }
-
   const response = h.response({
     status: 'fail',
-    message: 'catatan gagal ditambahkan',
+    message: 'Catatan gagal ditambahkan',
   });
   response.code(500);
   return response;
 };
 
 const getAllNotesHandler = () => ({
-  status: 'Success',
+  status: 'success',
   data: {
     notes,
   },
